@@ -1,0 +1,28 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+home:
+    path: /
+    controller: App\Controller\HomeController::index
+player_home:
+    path: /players
+    controller: App\Controller\PlayerController::index
+registration_home:
+    path: /registrations
+    controller: App\Controller\RegistrationController::index
+sport_match_home:
+    path: /sport-matches
+    controller: App\Controller\SportMatchController::index
+tournament_home:
+    path: /tournaments
+    controller: App\Controller\TournamentController::index
+api_login_check:
+    path: /api/login_check
+error_access_denied:
+    path: /access-denied
+    controller: App\Controller\ErrorController::accessDenied
+
+
+

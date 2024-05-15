@@ -1,0 +1,581 @@
+{
+	"info": {
+		"_postman_id": "074b3706-a619-48ac-ba6d-d6997266b54e",
+		"name": "PHP_sport",
+		"description": "Projet final : Plateforme de Gestion de Tournois de sport\n\n  \nDescription :  \nLe projet final consiste en la création d'une plateforme de gestion de tournois de sport. L'application permettra aux utilisateurs de créer, organiser et participer à des tournois de sport. Les fonctionnalités principales incluent la gestion des tournois, des joueurs, des inscriptions et des parties.\n\n  \nCaractéristiques  \nLe projet peut être réalisé par des équipes de 3 personnes maximum.\n\n  \nRendu  \nVous devez soumettre une archive contenant le code source de votre projet. Vous devez également fournir une documentation complète de votre solution et comment l'installer si nécessaire (ceci inclut le générateur de schéma de base de données).\n\n  \nEn cas d'informations manquantes (ou de non-fonctionnement), vous perdrez des points.\n\n  \nÉléments notés  \nRespect des normes RESTful : 2 pts  \nBase de données : 3 pts  \nAdministration : 5 pts  \nSécurité de votre application : 5 pts  \nTests unitaires : 2 pts  \nRespect des spécificités : 3 pts  \nJusqu'à 50% des points pour chaque catégorie peuvent être perdus à cause de la qualité du code et/ou de la sécurité. Vous devez travailler comme vous le feriez dans une entreprise ayant un impact sur les clients !\n\n  \nFonctionnalités clés :  \n• Gestion des Tournois : Les utilisateurs peuvent créer et organiser des tournois  \nde sport, définir les dates, les lieux et les règles des tournois.  \n• Gestion des Joueurs : Les utilisateurs peuvent s'inscrire, créer un profil et  \nparticiper à des tournois en tant que participant.  \n• Inscriptions aux Tournois : Les participant peuvent s'inscrire à des tournois  \ndisponibles, gérer leurs inscriptions et suivre leur statut.  \n• Gestion des Parties : Les parties entre les participants sont organisés et gérés  \nau sein des tournois, avec la possibilité de saisir les scores et de déterminer les  \ngagnants.  \n• Administration : Une interface d'administration permet aux administrateurs de  \ngérer les tournois, les participants, les inscriptions et les parties de manière  \ncentralisée.  \nSpécificités :  \n• Événements :  \no Lorsqu’un tournoi est remporté, une notification doit être envoyée aux participants  \ndu tournoi avec le vainqueur dedans.  \no Lorsqu’un participant met à jour son score, une notification doit être envoyée à  \nl’autre joueur pour qu’il le remplisse s’il ne l’a pas encore fait. Lorsqu’un admin  \nmodifie les scores, aucune notification n’est envoyée.  \no Lorsque les deux participants ont rempli leur score, le statut de la partie doit  \nautomatiquement passer en terminer.  \no L’interface d’administration ne doit être accessible qu’aux admins, elle permettra de  \ngérer les tournois, les parties, les utilisateurs ainsi que les inscriptions à un tournoi.  \n• Règles :  \no Lorsqu’une partie est créé dans un tournoi, il ne peut faire jouer que des joueurs  \nayant une inscription confirmée dans celui-ci.  \n• Commande Symfony :  \no Créer des fixtures.  \no Faire une commande qui prend en entrée un ID utilisateur et qui sort le nombre de  \nvictoires et de défaites au total. Rajouter un argument ID de tournoi qui s’il est passé  \nressort le nombre de victoires et de défaites pour ce tournoi.\n\n  \nEntités  \n• Tournament (Tournoi) :  \no tournamentName (string) : Nom du tournoi  \no startDate (date) : Date de début du tournoi  \no endDate (date) : Date de fin du tournoi  \no location (string, optionnel) : Lieu du tournoi  \no description (texte) : Description du tournoi  \no maxParticipants (integer) : Nombre maximum de participants au tournoi  \no status (dynamique) : Le statut du tournoi doit être renvoyé dynamiquement en se  \nbasant sur les dates de début et de fin du tournoi.  \no sport (string) : Nom du sport  \no organizer (relation vers l'entité User) : Organisateur du tournoi  \no winner (relation vers l’entité User) : Gagnant du tournoi  \no Attention la relation avec Game est au pluriel (games)  \n• User (Joueur) :  \no lastName (string) : Nom de famille du joueur  \no firstName (string) : Prénom du joueur  \no username (string) : Nom d'utilisateur du joueur  \no emailAddress (string) : Adresse email du joueur  \no password (string) : Mot de passe du joueur (haché)  \no status (string) : Statut de l’utilisateur (actif, suspendu, banni)  \n• Registration (Inscription) :  \no player (relation vers l'entité User) : Joueur inscrit au tournoi  \no tournament (relation vers l'entité Tournament) : Tournoi auquel le joueur est  \ninscrit  \no registrationDate (date) : Date d'inscription du joueur au tournoi  \no status (string) : Statut de l'inscription (confirmée, en attente)  \n• SportMatch (Partie) :  \no tournament (relation vers l'entité Tournament) : Tournoi auquel le match  \nappartient  \no player1 (relation vers l'entité User) : Joueur 1 du match  \no player2 (relation vers l'entité User) : Joueur 2 du match  \no matchDate (date) : Date du match  \no scorePlayer1 (integer) : Score du joueur 1 dans le match  \no scorePlayer2 (integer) : Score du joueur 2 dans le match  \no status (string) : Statut du match (en attente, en cours, terminé)\n\n  \nRoutes\n\n1. Tournament Management (Gestion des tournois) :  \n    o GET /api/tournaments : récupère la liste des tournois  \n    ▪ Contraintes : Aucune.  \n    o POST /api/tournaments : crée un nouveau tournoi  \n    ▪ Contraintes : Les données du tournoi doivent être fournies dans le corps de la  \n    requête au format JSON. Au moins, le nom du tournoi, la date de début, la  \n    date de fin et la description doivent être fournis.  \n    o GET /api/tournaments/{id} : récupère les détails d'un tournoi spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \n    existant.  \n    o PUT /api/tournaments/{id} : mets à jour les informations d'un tournoi spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \n    existant. Les données mises à jour du tournoi doivent être fournies dans le  \n    corps de la requête au format JSON.  \n    o DELETE /api/tournaments/{id} : Supprime un tournoi spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \n    existant.\n2. Player Management (Gestion des joueurs) :  \n    o GET /api/players : récupère la liste des joueurs  \n    ▪ Contraintes : Aucune.  \n    o POST /register : créer un utilisateur  \n    ▪ Contraintes : Les données de l’utilisateur doivent être fournies dans le corps  \n    de la requête au format JSON. Au moins, le nom, le prénom, le nom  \n    d'utilisateur, l'adresse e-mail et le mot de passe doivent être fournis.  \n    o GET /api/players/{id} : récupère les détails d'un joueur spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un joueur  \n    existant.  \n    o PUT /api/players/{id} : mets à jour les informations d'un joueur spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un joueur  \n    existant. Les données mises à jour du joueur doivent être fournies dans le  \n    corps de la requête au format JSON.  \n    o DELETE /api/players/{id} : Supprime un joueur spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un joueur  \n    existant.\n3. Registration Management (Gestion des inscriptions) :  \n    o GET /api/tournaments/{id}/registrations : récupère la liste des inscriptions pour un  \n    tournoi spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \n    existant.  \n    o POST /api/tournaments/{id}/registrations : inscris un joueur à un tournoi spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \n    existant. Les données de l'inscription doivent être fournies dans le corps de la  \n    requête au format JSON, contenant l'identifiant du joueur à inscrire.  \n    o DELETE /api/tournaments/{idTournament}/registrations/{idRegistration} : Annule  \n    l'inscription d'un joueur à un tournoi spécifique  \n    ▪ contraint : {idTournament} doit correspondre à un identifiant valide d'un  \n    tournoi existant. {idRegistration} dois correspondre à un identifiant valide  \n    d'une inscription existante pour ce tournoi.\n4. SportMatch Management (Gestion des parties) :  \n    o GET /api/tournaments/{id}/sport-matchs : récupère la liste des parties pour un  \n    tournoi spécifique  \n    ▪ contraint : {id} doit correspondre à un identifiant valide d'un tournoi existant.  \n    o POST /api/tournaments/{id}/sport-matchs : crée une nouvelle partie pour un  \n    tournoi spécifique  \n    ▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \n    existant. Les données du match doivent être fournies dans le corps de la  \n    requête au format JSON, contenant les identifiants des joueurs participants.  \n    o GET /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} : récupère  \n    les détails d'une partie spécifique  \n    ▪ Contraintes : {idTournament} doit correspondre à un identifiant valide d'un  \n    tournoi existant. {idSportMatchs} dois correspondre à un identifiant valide  \n    d'une partie pour ce tournoi.  \n    o PUT /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} : mets à  \n    jour les résultats d'une partie spécifique  \n    ▪ Contraintes : {idTournament} doit correspondre à un identifiant valide d'un  \n    tournoi existant. {idSportMatchs} dois correspondre à un identifiant valide  \n    d'une partie pour ce tournoi. Les données mises à jour de la partie doivent  \n    être fournies dans le corps de la requête au format JSON, contenant les  \n    scores des joueurs.  \n    ▪ Attention lors de la mise à jour des scores, seul le joueur concerné peut  \n    mettre son score à jour, ou une admin.  \n    o DELETE /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} :  \n    Supprime une partie spécifique  \n    ▪ Contraintes : {idTournament} doit correspondre à un identifiant valide d'un  \n    tournoi existant. {idSportMatchs} dois correspondre à un identifiant valide  \n    d'une partie pour ce tournoi.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24605543",
+		"_collection_link": "https://supinfotours.postman.co/workspace/New-Team-Workspace~60af31a4-7374-4d56-ac3c-02b5501e1a50/collection/24605543-074b3706-a619-48ac-ba6d-d6997266b54e?action=share&source=collection_link&creator=24605543"
+	},
+	"item": [
+		{
+			"name": "tournament Management",
+			"item": [
+				{
+					"name": "POST /api/tournaments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tournoi de ping-pong\",\r\n    \"startDate\": \"2023-08-01\",\r\n    \"endDate\": \"2023-08-15\",\r\n    \"description\": \"Tournoi de ping-pong pour les amateurs\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/tournaments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTQwMzI0NDUsImV4cCI6MTcxNDAzNjA0NSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbEFkZHJlc3MiOiJhZG1pbi5zeW1mb255QGdtYWlsLmNvbSJ9.vVGgQkr6DetbaGpRsam7535leA0-v4Qd-Vk3IfmAqwN-0KvgrT7fsjoowPzGJ7Pms438dyFtSLwxSQHfxcd8jHkp863SU7vs30Z2lJ7JOerzSD58nrLAq7JNVQD-bpyesudHw2ns5uzrSJ9PPNAi2rw5RMGn8rBj9srYMhsP8qDlIdloXBW5PnAYUaB-BeJ6i5xO117qfJtz6-VbHUpbQ6ERwIjnJZdaIuckjRVqXqDZm-1bbfRNCy-dwpIB4zWkKZYd3mfv_60I2ofoqyMsO5jtbZD7sQMi_a3YhvIs1FGNOIba63ZgN6_OyGpuu9sjiFqfAg5cTzEleNkN_iw7zw",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/tournaments/{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTQwMzI0NDUsImV4cCI6MTcxNDAzNjA0NSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbEFkZHJlc3MiOiJhZG1pbi5zeW1mb255QGdtYWlsLmNvbSJ9.vVGgQkr6DetbaGpRsam7535leA0-v4Qd-Vk3IfmAqwN-0KvgrT7fsjoowPzGJ7Pms438dyFtSLwxSQHfxcd8jHkp863SU7vs30Z2lJ7JOerzSD58nrLAq7JNVQD-bpyesudHw2ns5uzrSJ9PPNAi2rw5RMGn8rBj9srYMhsP8qDlIdloXBW5PnAYUaB-BeJ6i5xO117qfJtz6-VbHUpbQ6ERwIjnJZdaIuckjRVqXqDZm-1bbfRNCy-dwpIB4zWkKZYd3mfv_60I2ofoqyMsO5jtbZD7sQMi_a3YhvIs1FGNOIba63ZgN6_OyGpuu9sjiFqfAg5cTzEleNkN_iw7zw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments\\120",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"120"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /api/tournaments/{id}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tournoi de printemps\",\r\n    \"startDate\": \"2024-05-01\",\r\n    \"endDate\": \"2024-05-10\",\r\n    \"description\": \"Tournoi de football\",\r\n    \"maxParticipants\":\"10\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments\\10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /api/tournaments/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments\\11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GET /api/tournaments : récupère la liste des tournois  \n▪ Contraintes : Aucune.  \no POST /api/tournaments : crée un nouveau tournoi  \n▪ Contraintes : Les données du tournoi doivent être fournies dans le corps de la  \nrequête au format JSON. Au moins, le nom du tournoi, la date de début, la  \ndate de fin et la description doivent être fournis.  \no GET /api/tournaments/{id} : récupère les détails d'un tournoi spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \nexistant.  \no PUT /api/tournaments/{id} : mets à jour les informations d'un tournoi spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \nexistant. Les données mises à jour du tournoi doivent être fournies dans le  \ncorps de la requête au format JSON.  \no DELETE /api/tournaments/{id} : Supprime un tournoi spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \nexistant.EndFragment"
+		},
+		{
+			"name": "Player Management",
+			"item": [
+				{
+					"name": "GET /api/players",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTM0NjI3MjUsImV4cCI6MTcxMzQ2NjMyNSwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbEFkZHJlc3MiOiJhZG1pbi5zeW1mb255QGdtYWlsLmNvbSJ9.lM2xhMbBtoNL_RD_nsi9mseMAoSBow8y-_MSO5VaZSrGUgVW-mlESFemG8zhNN0GahwucyyMphnl_EL8LWjUfGmIifKMkjVGOWf25WGMgbWuXFeoJMP3qp45fjTP41gt8367BrEX8DxXtUAQ1BBUNo4Kdnco2MiS5L3N62fJD4BJA5qaPNp567zKOSNaxWo77vh3VTBpBtAFZ5UksRmrQq2lemf4QF52Lcud4R9axgFay78UdDxBUrqG7JN4WNS1Emv0H0HuRoneWOPrNniN2xYIKS-UvDwFLiTXfsVnDZh_1OrPqsuYfUsNLsysGkKtRMv0suE5mkRX_9rKAM_LQQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/players",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"players"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"félix\",\r\n    \"lastName\": \"duband\",\r\n    \"username\": \"felixduband\",\r\n    \"email\": \"felixduband@example.com\",\r\n    \"password\": \"password123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/players/{id} ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/players/30",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"players",
+								"30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /api/players/{id}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"John\",\r\n    \"lastName\": \"Doe\",\r\n    \"username\": \"johndoe\",\r\n    \"email\": \"johndoe@example.com\",\r\n    \"password\": \"newpassword\",\r\n    \"status\": \"active\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/players/32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"players",
+								"32"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /api/players/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/players/32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"players",
+								"32"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GET /api/players : récupère la liste des joueurs  \n▪ Contraintes : Aucune.  \no POST /register : créer un utilisateur  \n▪ Contraintes : Les données de l’utilisateur doivent être fournies dans le corps  \nde la requête au format JSON. Au moins, le nom, le prénom, le nom  \nd'utilisateur, l'adresse e-mail et le mot de passe doivent être fournis.  \no GET /api/players/{id} : récupère les détails d'un joueur spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un joueur  \nexistant.  \no PUT /api/players/{id} : mets à jour les informations d'un joueur spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un joueur  \nexistant. Les données mises à jour du joueur doivent être fournies dans le  \ncorps de la requête au format JSON.  \no DELETE /api/players/{id} : Supprime un joueur spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un joueur  \nexistant.EndFragment"
+		},
+		{
+			"name": "Registration Management",
+			"item": [
+				{
+					"name": "GET /api/tournaments/{id}/registrations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/2/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"2",
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/tournaments/{id}/registrations",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"playerId\": \"26\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/10/registrations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"10",
+								"registrations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /api/tournaments/{idTournament}/registrations/{idRegistration}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/10/registrations/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"10",
+								"registrations",
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "GET /api/tournaments/{id}/registrations : récupère la liste des inscriptions pour un  \ntournoi spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \nexistant.  \no POST /api/tournaments/{id}/registrations : inscris un joueur à un tournoi spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \nexistant. Les données de l'inscription doivent être fournies dans le corps de la  \nrequête au format JSON, contenant l'identifiant du joueur à inscrire.  \no DELETE /api/tournaments/{idTournament}/registrations/{idRegistration} : Annule  \nl'inscription d'un joueur à un tournoi spécifique  \n▪ contraint : {idTournament} doit correspondre à un identifiant valide d'un  \ntournoi existant. {idRegistration} dois correspondre à un identifiant valide  \nd'une inscription existante pour ce tournoi.EndFragment"
+		},
+		{
+			"name": "SportMatch Management",
+			"item": [
+				{
+					"name": "GET /api/tournaments/{id}/sport-matchs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/6/sport-matchs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"6",
+								"sport-matchs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /api/tournaments/{id}/sport-matchs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTM2Mjk0ODYsImV4cCI6MTcxMzYzMzA4Niwicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJlbWFpbEFkZHJlc3MiOiJhZG1pbi5zeW1mb255QGdtYWlsLmNvbSJ9.XWQ1OxRnkXZt6qeGSKfV8VDOsYvRRR__KGnpNYdy-4cwZtwHAJOwC9P9sodtua-F9muNd3ZT1pI52QGjCIteval12TWASKij0Fxrq9-3l0yz7RrieW4-GOeKLpZhMCnYhF60J0eC-QJCk8ZICKhtdrzMhAdxSZTTp19qJX-C6_SkCSW1QKePpIBe4DYrTpa_OQ8J2iqaux6h6t0aYf1XWQHr4Tr5mkUWK79xwrh4faWlVqcxPbls_Pt0sKYw_vZ8_Ma7FllrSiA9wenEGRTSvKhg2nWo3iQTCqrm62lpd9NADYZnca66iwqjwqSwkiyLlk3ppzWBvnw-U86f013RVA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"player1Id\": \"62\",\r\n    \"player2Id\": \"63\",\r\n    \"date\": \"2023-08-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/40/sport-matchs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"40",
+								"sport-matchs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/10/sport-matchs/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"10",
+								"sport-matchs",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTM5MDc4MDIsImV4cCI6MTcxMzkxMTQwMiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImVtYWlsQWRkcmVzcyI6Im1lcmxpbi5sZXJveUBnbWFpbC5jb20ifQ.JC0k3_buvCZdR83UCc8kRzgKZfUBGaTZlKTbJfAfoGaYGi-BhN93MiTdLkzZEqWO2EELPGfZ7OV5wfbGjkGcZLhUnv4GgNbtzws4pls6TeZtLidf-kG6LGWgw2cx1s3Wx4X6N3VaMKYNRp6Slk1Gpbvbx1J7W7oQoNcpUB8GGfXth_qheHd1g0DwbOLjWNvadaTzl9JGX--owNuojiy7_55blkZY3iUAYEzbMta98r63uFFymYSQ39rrUi4pUVoP4OOD_R8raNJ9FfdJa7MX0xBcQZvmUFVjpWGpzu_2ygwTVILtxK5Q2Jp43F9lpWazw3TbC3oGWWXvpUSuA5ZDrA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"playerId\": \"92\",\r\n    \"score\": \"20\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/70/sport-matchs/72",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"70",
+								"sport-matchs",
+								"72"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/tournaments/10/sport-matchs\\5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"tournaments",
+								"10",
+								"sport-matchs",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "StartFragmentGET /api/tournaments/{id}/sport-matchs : récupère la liste des parties pour un  \ntournoi spécifique  \n▪ contraint : {id} doit correspondre à un identifiant valide d'un tournoi existant.  \no POST /api/tournaments/{id}/sport-matchs : crée une nouvelle partie pour un  \ntournoi spécifique  \n▪ Contraintes : {id} doit correspondre à un identifiant valide d'un tournoi  \nexistant. Les données du match doivent être fournies dans le corps de la  \nrequête au format JSON, contenant les identifiants des joueurs participants.  \no GET /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} : récupère  \nles détails d'une partie spécifique  \n▪ Contraintes : {idTournament} doit correspondre à un identifiant valide d'un  \ntournoi existant. {idSportMatchs} dois correspondre à un identifiant valide  \nd'une partie pour ce tournoi.  \no PUT /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} : mets à  \njour les résultats d'une partie spécifique  \n▪ Contraintes : {idTournament} doit correspondre à un identifiant valide d'un  \ntournoi existant. {idSportMatchs} dois correspondre à un identifiant valide  \nd'une partie pour ce tournoi. Les données mises à jour de la partie doivent  \nêtre fournies dans le corps de la requête au format JSON, contenant les  \nscores des joueurs.  \n▪ Attention lors de la mise à jour des scores, seul le joueur concerné peut  \nmettre son score à jour, ou une admin.  \no DELETE /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} :  \nSupprime une partie spécifique  \n▪ Contraintes : {idTournament} doit correspondre à un identifiant valide d'un  \ntournoi existant. {idSportMatchs} dois correspondre à un identifiant valide  \nd'une partie pour ce tournoi.EndFragment"
+		},
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Récuperation jeton jwt",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailAddress\": \"admin.symfony@gmail.com\",\r\n    \"password\": \"password\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/login_check",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"login_check"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

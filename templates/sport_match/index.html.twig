@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Plateforme de Gestion de Tournois de Sport{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn_all {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #h1_all {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        #p_all {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 20px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .username {
+            color: #333;
+            font-weight: bold;
+        }
+
+        .btn-head {
+            background-color: transparent;
+            color: #007BFF;
+            border: 2px solid #007BFF;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+
+
+        .player-btn {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <body data-page="tournament-management">
+    <div class="header">
+        {% if app.user %}
+            <span class="username">Connecté en tant que {{ app.user.username }}</span>
+        {% endif %}        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <a href="{{ path('admin') }}" class="btn-admin btn btn_all">Admin</a>
+        {% endif %}
+        <a href="{{ path('app_logout') }}" class="btn-head btn btn_all">Déconnexion</a>
+
+    </div>
+
+    <div class="container">
+        <h1 id="h1_all">Gestion des SportMatchs</h1>
+
+        <div class="player-container">
+            <h2>SportMatch Management </h2>
+            <a href="{{ path('app_api_tournaments_sport_matchs', {'id': 1}) }}" class="player-btn btn_all">GET /api/tournaments/{id}/sport-matchs : récupère la liste des parties pour un
+                tournoi spécifique</a>
+            <a href="{{ path('app_api_tournaments_sport_matchs_post', {'id': 1}) }}" class="player-btn btn_all">POST /api/tournaments/{id}/sport-matchs : crée une nouvelle partie pour un
+                tournoi spécifique</a>
+            <a href="{{ path('app_api_tournaments_sport_matchs_id', {'idTournament': 1, 'idSportMatchs': 1}) }}" class="player-btn btn_all">GET /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs}</a>
+            <a href="{{ path('app_api_tournaments_sport_matchs_id_put', {'idTournament': 1, 'idSportMatchs': 1}) }}" class="player-btn btn_all">PUT /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} :
+                Met à jour une partie spécifique</a>
+            <a href="{{ path('app_api_tournaments_sport_matchs_id_delete', {'idTournament': 1, 'idSportMatchs': 1}) }}" class="player-btn btn_all">DELETE /api/tournaments/{idTournament}/sport-matchs/{idSportMatchs} :
+                Supprime une partie spécifique</a>
+        </div>
+        <div class="btn-container">
+            <a href="{{ path('home') }}" class="btn">Retour à l'accueil</a>
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
